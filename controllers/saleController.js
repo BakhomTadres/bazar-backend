@@ -115,74 +115,42 @@ const calculateStats = async (startDate, endDate) => {
   };
 };
 
-export const getDashboardStats = async (req, res) => {
+export const getMonthlyDashboard = async (req, res) => {
   try {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
-
-
     const startOfMonth = new Date(
       new Date().getFullYear(),
       new Date().getMonth(),
-      1,
+      1
     );
 
     const endOfMonth = new Date(
       new Date().getFullYear(),
       new Date().getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-      999,
+      1
     );
 
-    const startOfThreeMonths = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() - 2,
-      1,
-    );
-
-    const endOfThreeMonths = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-      999,
-    );
-
-
-    const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-
-    const endOfYear = new Date(
-      new Date().getFullYear(),
-      11,
-      31,
-      23,
-      59,
-      59,
-      999,
-    );
-
-    const [today, month, threeMonths, year] = await Promise.all([
-  calculateStats(startOfDay, endOfDay),
-  calculateStats(startOfMonth, endOfMonth),
-  calculateStats(startOfThreeMonths, endOfThreeMonths),
-  calculateStats(startOfYear, endOfYear),
-]);
-    res.status(200).json({
-      success: true,
-      data: {
-        today,
-        month,
-        threeMonths,
-        year,
+    const result = await Sale.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startOfMonth,
+            $lt: endOfMonth,
+          },
+        },
       },
+      {
+        $group: {
+          _id: "$currency",
+          total: {
+            $sum: "$totalSale",
+          },
+        },
+      },
+    ]);
+
+    res.json({
+      status: "success",
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
