@@ -22,7 +22,6 @@ export const createProduct = async (req, res) => {
     name,
     barcode,
     buyPrice,
-    sellPrice,
     quantity,
     minQuantity,
   });
