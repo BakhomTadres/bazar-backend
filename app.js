@@ -7,6 +7,7 @@ import productRouter from "./routes/productsRoute.js";
 import { salesRouter } from "./routes/salesRouter.js";
 import authRouter from "./routes/authRoute.js";
 import supplierRouter from "./routes/supplierRouter.js";
+import purchaseRouter from "./routes/purchaseRoute.js";
 
 dotenv.config();
 
@@ -20,5 +21,6 @@ app.use("/api/products", productRouter);
 app.use("/api/sales", salesRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/suppliers", supplierRouter);
+app.use("/api/purchases", purchaseRouter);
 
 export default app;
